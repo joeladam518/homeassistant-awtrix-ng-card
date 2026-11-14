@@ -3,7 +3,6 @@ import { html, type TemplateResult } from "lit";
 import type { AwtrixNgCard } from "../clock-card.ts";
 import { fmtUptime, toHex } from "../format.ts";
 
-const num = (e: Event) => Number((e.target as HTMLInputElement).value);
 const capitalize = (s: string) => s[0]!.toUpperCase() + s.slice(1);
 
 /** Two taps to reboot: the first arms the button for 3.5 s. */
@@ -65,7 +64,7 @@ export function renderDisplayPanel(card: AwtrixNgCard): TemplateResult {
           data-k="appDur"
           .value=${card._held("appDur", s.appDurationMs != null ? Math.round(s.appDurationMs / 1000) : null)}
           @input=${card._draft("appDur")}
-          @change=${(e: Event) => card._settings({ appDurationMs: num(e) * 1000 })}
+          @change=${card._commit("appDur", (v) => card._settings({ appDurationMs: v * 1000 }))}
           @blur=${card._clearDraft("appDur")}
         />
         <span class="val">${appDur != null ? `${appDur} s` : ""}</span>
@@ -92,7 +91,7 @@ export function renderDisplayPanel(card: AwtrixNgCard): TemplateResult {
           data-k="transDur"
           .value=${card._held("transDur", s.transitionDurationMs)}
           @input=${card._draft("transDur")}
-          @change=${(e: Event) => card._settings({ transitionDurationMs: num(e) })}
+          @change=${card._commit("transDur", (v) => card._settings({ transitionDurationMs: v }))}
           @blur=${card._clearDraft("transDur")}
         />
         <span class="val">${transDur != null ? `${(transDur / 1000).toFixed(1)} s` : ""}</span>

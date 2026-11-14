@@ -464,10 +464,14 @@ export class AwtrixNgCard extends LitElement {
   /**
    * A value for a `.value` binding that leaves the control alone while the user is using it
    * (and when there's no value yet), so incoming state never fights the user.
+   *
+   * "Using it" means focused, or a slider mid-drag (it has a draft). The draft check matters:
+   * Safari and the iOS / macOS apps don't focus a slider you drag, so without it every
+   * re-render would snap the slider back to the old value and the change would never be sent.
    */
   _held(key: string, value: unknown): unknown {
     const focused = this.renderRoot?.querySelector?.(":focus") as HTMLElement | null;
-    if (value == null || focused?.dataset?.k === key) return noChange;
+    if (value == null || key in this._drafts || focused?.dataset?.k === key) return noChange;
     return live(String(value));
   }
 
@@ -475,6 +479,17 @@ export class AwtrixNgCard extends LitElement {
   _draft(key: string) {
     return (e: Event) => {
       this._drafts = { ...this._drafts, [key]: Number((e.target as HTMLInputElement).value) };
+    };
+  }
+
+  /**
+   * @change handler for a slider: send the value, then drop the draft. Done here and not only
+   * on blur, because blur never comes when the slider was never focused (Safari).
+   */
+  _commit(key: string, send: (value: number) => void) {
+    return (e: Event) => {
+      send(Number((e.target as HTMLInputElement).value));
+      this._clearDraft(key)();
     };
   }
 
@@ -645,18 +660,19 @@ export class AwtrixNgCard extends LitElement {
             class=${auto ? "auto" : ""}
             .value=${this._held("bri", briNow)}
             @input=${this._draft("bri")}
-            @change=${(e: Event) =>
-              this._settings({
-                brightness: Number((e.target as HTMLInputElement).value),
-                autoBrightness: false,
-              })}
+            @change=${this._commit("bri", (brightness) =>
+              this._settings({ brightness, autoBrightness: false }),
+            )}
             @blur=${this._clearDraft("bri")}
           />
           <span class="val">${briShown != null ? `${Math.round((briShown / 255) * 100)}%` : ""}</span>
           <button
             class="chip-btn ${auto ? "on" : ""}"
             ?hidden=${!hasLdr}
-            @click=${() => this._settings({ autoBrightness: !s.autoBrightness })}
+            @click=${() => {
+              this._clearDraft("bri")();
+              this._settings({ autoBrightness: !s.autoBrightness });
+            }}
           >
             Auto
           </button>

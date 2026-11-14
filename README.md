@@ -24,7 +24,7 @@ Everything goes through **MQTT**, the same way Blueforcer's own Home Assistant g
 
 1. Download `awtrix-ng-card.js` from the [latest release](https://github.com/joeladam518/homeassistant-awtrix-ng-card/releases/latest) into `/config/www/`.
 2. Go to **Settings → Dashboards → ⋮ → Resources → Add resource**:
-   - URL: `/local/awtrix-ng-card.js?v=2.0.1`
+   - URL: `/local/awtrix-ng-card.js?v=2.0.2`
    - Type: **JavaScript module**
 3. Hard-refresh the browser. In the phone app, use **Settings → Companion app → Debugging → Reset frontend cache**.
 

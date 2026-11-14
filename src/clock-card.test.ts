@@ -144,6 +144,36 @@ describe("awtrix-ng-card", () => {
     ]);
   });
 
+  it("keeps a dragged brightness slider in place when it isn't focused (Safari)", async () => {
+    const hass = fakeHass();
+    const card = await mount(hass);
+    online(hass);
+    await card.updateComplete;
+    const bri = $<HTMLInputElement>(card, ".row input[type=range]");
+    expect(card.shadowRoot!.querySelector(":focus")).toBeNull();
+
+    // Drag without focus, and the clock reports its old value mid-drag.
+    bri.value = "200";
+    bri.dispatchEvent(new Event("input"));
+    await card.updateComplete;
+    hass.mqtt("clock1/state/settings", { brightness: 128, autoBrightness: false });
+    await card.updateComplete;
+    expect(bri.value).toBe("200");
+    expect(clean($(card, ".bright .val").textContent)).toBe("78%");
+
+    bri.dispatchEvent(new Event("change"));
+    await card.updateComplete;
+    expect(hass.published().at(-1)).toEqual([
+      "clock1/cmd/settings",
+      '{"brightness":200,"autoBrightness":false}',
+    ]);
+    // No blur ever comes, but the draft is gone, so new state shows again.
+    expect(card._drafts).toEqual({});
+    hass.mqtt("clock1/state/settings", { brightness: 50, autoBrightness: false });
+    await card.updateComplete;
+    expect(bri.value).toBe("50");
+  });
+
   it("shows indicators and switches one off", async () => {
     const hass = fakeHass();
     const card = await mount(hass);

@@ -40,7 +40,7 @@ export function renderSoundPanel(card: AwtrixNgCard): TemplateResult {
               data-k=${key}
               .value=${card._held(key, s[key])}
               @input=${card._draft(key)}
-              @change=${(e: Event) => card._settings({ [key]: Number((e.target as HTMLInputElement).value) })}
+              @change=${card._commit(key, (v) => card._settings({ [key]: v }))}
               @blur=${card._clearDraft(key)}
             />
             <span class="val">${shown}%</span>
