@@ -2,7 +2,10 @@
 
 A Home Assistant dashboard card for **AWTRIX NG pixel clocks** (Blueforcer firmware 1.2+, e.g. Ulanzi TC001 / TC002): a live view of the display and full control of one clock.
 
-<!-- TODO: screenshot (the Marketplace needs one), e.g. ![AWTRIX NG Card](docs/screenshot.png) -->
+<p align="center">
+  <img src="https://raw.githubusercontent.com/joeladam518/homeassistant-awtrix-ng-card/main/docs/screenshot-bedroom.png" alt="AWTRIX NG Card for a 52×16 clock showing the BigClock app" width="380">
+  <img src="https://raw.githubusercontent.com/joeladam518/homeassistant-awtrix-ng-card/main/docs/screenshot-office.png" alt="AWTRIX NG Card for a 32×8 clock showing the time, with sensor chips and Auto brightness" width="380">
+</p>
 
 Everything goes through **MQTT**, the same way Blueforcer's own Home Assistant guide works. State is read from `<prefix>/state/...`, and commands go out with `mqtt.publish` to `<prefix>/cmd/...`.
 
@@ -24,7 +27,7 @@ Everything goes through **MQTT**, the same way Blueforcer's own Home Assistant g
 
 1. Download `awtrix-ng-card.js` from the [latest release](https://github.com/joeladam518/homeassistant-awtrix-ng-card/releases/latest) into `/config/www/`.
 2. Go to **Settings → Dashboards → ⋮ → Resources → Add resource**:
-   - URL: `/local/awtrix-ng-card.js?v=2.0.2`
+   - URL: `/local/awtrix-ng-card.js?v=2.0.3`
    - Type: **JavaScript module**
 3. Hard-refresh the browser. In the phone app, use **Settings → Companion app → Debugging → Reset frontend cache**.
 
