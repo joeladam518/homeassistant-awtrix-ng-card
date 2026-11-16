@@ -1,11 +1,15 @@
+import { batteryIcon } from "@joeladam518/shared-cards/format.ts";
+import { lsGet, lsSet } from "@joeladam518/shared-cards/storage.ts";
+import { ToastController } from "@joeladam518/shared-cards/toast.ts";
+import type {
+  HomeAssistant,
+  LovelaceCardConfig,
+  LovelaceGridOptions,
+} from "@joeladam518/shared-cards/types.ts";
 import { html, LitElement, noChange, nothing, type PropertyValues, unsafeCSS } from "lit";
 import { live } from "lit/directives/live.js";
 
 import { wifiIcon } from "./format.ts";
-import { batteryIcon } from "./lib/format.ts";
-import { lsGet, lsSet } from "./lib/storage.ts";
-import { ToastController } from "./lib/toast.ts";
-import type { HomeAssistant, LovelaceCardConfig, LovelaceGridOptions } from "./lib/types.ts";
 import { type MqttMessage, publish, subscribeTopic, type Unsubscribe } from "./mqtt.ts";
 import { buildNotify, loadRecent, type RecentMessage, saveRecent } from "./notify.ts";
 import { renderDisplayPanel } from "./panels/display.ts";
@@ -15,8 +19,8 @@ import { renderSoundPanel } from "./panels/sound.ts";
 import { drawScreen, type ScreenFrame } from "./screen.ts";
 
 import commonCss from "./common.css?inline";
-import switchCss from "./lib/switch.css?inline";
-import toastCss from "./lib/toast.css?inline";
+import switchCss from "@joeladam518/shared-cards/switch.css?inline";
+import toastCss from "@joeladam518/shared-cards/toast.css?inline";
 
 export interface AwtrixNgCardConfig extends LovelaceCardConfig {
   /** The clock's MQTT prefix (required), e.g. awtrix_clock_1. */

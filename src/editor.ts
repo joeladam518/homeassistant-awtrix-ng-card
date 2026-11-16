@@ -1,7 +1,7 @@
+import type { HomeAssistant } from "@joeladam518/shared-cards/types.ts";
 import { html, LitElement, nothing } from "lit";
 
 import type { AwtrixNgCardConfig } from "./clock-card.ts";
-import type { HomeAssistant } from "./lib/types.ts";
 
 const LABELS: Record<string, string> = {
   prefix: "Clock (MQTT prefix)",
