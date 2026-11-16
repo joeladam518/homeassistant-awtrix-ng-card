@@ -1,10 +1,10 @@
 import { defineOnce, logVersion, registerCard } from "@joeladam518/shared-cards/register.ts";
 
-import { AwtrixNgCard } from "./clock-card.ts";
-import { AwtrixNgCardEditor } from "./editor.ts";
+import { AwtrixNgCardElement } from "./clock-card.tsx";
+import { AwtrixNgCardEditorElement } from "./editor.tsx";
 
-defineOnce("awtrix-ng-card", AwtrixNgCard);
-defineOnce("awtrix-ng-card-editor", AwtrixNgCardEditor);
+defineOnce("awtrix-ng-card", AwtrixNgCardElement);
+defineOnce("awtrix-ng-card-editor", AwtrixNgCardEditorElement);
 
 registerCard({
   type: "awtrix-ng-card",

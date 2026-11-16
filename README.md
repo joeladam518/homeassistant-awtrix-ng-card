@@ -93,7 +93,7 @@ npm run check   # typecheck, lint, format check, build, tests (what CI runs)
 npm run fmt     # format everything
 ```
 
-- **Code:** TypeScript + [Lit](https://lit.dev) in `src/`, styles in `src/*.css` (PostCSS), built with [rolldown](https://rolldown.rs) into one file with Lit included.
+- **Code:** TypeScript + [Preact](https://preactjs.com) function components in `src/` (`.tsx`), styles in `src/*.css` (PostCSS), built with [rolldown](https://rolldown.rs) into one file with Preact included.
 - **Layout:** `clock-card.ts` with its tabs in `panels/`, plus `mqtt.ts`, `screen.ts` and `notify.ts`.
 - **Shared helpers** come from [`@joeladam518/shared-cards`](https://github.com/joeladam518/homeassistant-ui/tree/main/packages/shared-cards) on GitHub Packages. To install, put a token with `read:packages` in `~/.npmrc` as `//npm.pkg.github.com/:_authToken=<token>`.
 

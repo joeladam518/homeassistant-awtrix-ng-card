@@ -1,9 +1,11 @@
+import { act, flush, stubHaElements } from "@joeladam518/shared-cards/testing.ts";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-import type { AwtrixNgCard } from "./clock-card.ts";
-import { type FakeHass, fakeHass, flush } from "./test-helpers.ts";
+import type { AwtrixNgCardElement as AwtrixNgCard } from "./clock-card.tsx";
+import { type FakeHass, fakeHass, flush as tick } from "./test-helpers.ts";
 
 beforeAll(async () => {
+  stubHaElements();
   await import("./index.ts");
 });
 
@@ -11,17 +13,24 @@ beforeEach(() => localStorage.clear());
 
 async function mount(hass: FakeHass, config: Record<string, unknown> = {}): Promise<AwtrixNgCard> {
   const card = document.createElement("awtrix-ng-card") as AwtrixNgCard;
-  card.setConfig({ type: "custom:awtrix-ng-card", prefix: "clock1", preview: false, ...config });
-  card.hass = hass;
-  document.body.append(card);
+  await act(() => {
+    card.setConfig({ type: "custom:awtrix-ng-card", prefix: "clock1", preview: false, ...config });
+    card.hass = hass;
+    document.body.append(card);
+  });
+  // let the MQTT subscriptions finish
+  await tick();
   await flush();
-  await card.updateComplete;
   return card;
 }
 
 const $ = <T extends Element = HTMLElement>(card: AwtrixNgCard, sel: string) =>
   card.shadowRoot!.querySelector<T>(sel)!;
 const clean = (s: string | null | undefined) => (s ?? "").replace(/\s+/g, " ").trim();
+const tab = (card: AwtrixNgCard, label: string) =>
+  [...card.shadowRoot!.querySelectorAll<HTMLElement>(".tabs button")].find(
+    (t) => clean(t.textContent) === label,
+  )!;
 
 function online(hass: FakeHass) {
   hass.mqtt("clock1/availability", "online");
@@ -74,7 +83,7 @@ describe("awtrix-ng-card", () => {
     const hass = fakeHass();
     const card = await mount(hass);
     online(hass);
-    await card.updateComplete;
+    await flush();
     expect(clean($(card, ".name").textContent)).toBe("awtrix-kitchen");
     expect(clean($(card, ".sub").textContent)).toBe("Online · 32×8 · clock1");
     expect($(card, ".dot").classList.contains("ok")).toBe(true);
@@ -94,12 +103,12 @@ describe("awtrix-ng-card", () => {
     const hass = fakeHass();
     const card = await mount(hass);
     online(hass);
-    await card.updateComplete;
+    await flush();
     $<HTMLInputElement>(card, "#msgText").value = "Washer done";
     $<HTMLInputElement>(card, "#msgColor").value = "#00ff00";
     $<HTMLInputElement>(card, "#msgIcon").value = "1234";
     $(card, ".actions .btn.primary").click();
-    await card.updateComplete;
+    await flush();
     const [topic, payload] = hass.published().at(-1)!;
     expect(topic).toBe("clock1/cmd/notify");
     expect(JSON.parse(payload)).toEqual({
@@ -120,7 +129,7 @@ describe("awtrix-ng-card", () => {
     const hass = fakeHass();
     const card = await mount(hass);
     $(card, ".actions .btn.primary").click();
-    await card.updateComplete;
+    await flush();
     expect(hass.published()).toEqual([]);
     expect(clean($(card, ".toast").textContent)).toBe("Type a message (or pick an icon) first");
   });
@@ -129,9 +138,9 @@ describe("awtrix-ng-card", () => {
     const hass = fakeHass();
     const card = await mount(hass);
     online(hass);
-    await card.updateComplete;
+    await flush();
     $(card, ".power").click();
-    await card.updateComplete;
+    await flush();
     expect(hass.published().at(-1)).toEqual(["clock1/cmd/display", '{"power":false}']);
     expect($(card, ".screen-wrap").classList.contains("off")).toBe(true);
 
@@ -148,29 +157,28 @@ describe("awtrix-ng-card", () => {
     const hass = fakeHass();
     const card = await mount(hass);
     online(hass);
-    await card.updateComplete;
+    await flush();
     const bri = $<HTMLInputElement>(card, ".row input[type=range]");
     expect(card.shadowRoot!.querySelector(":focus")).toBeNull();
 
     // Drag without focus, and the clock reports its old value mid-drag.
     bri.value = "200";
     bri.dispatchEvent(new Event("input"));
-    await card.updateComplete;
+    await flush();
     hass.mqtt("clock1/state/settings", { brightness: 128, autoBrightness: false });
-    await card.updateComplete;
+    await flush();
     expect(bri.value).toBe("200");
     expect(clean($(card, ".bright .val").textContent)).toBe("78%");
 
     bri.dispatchEvent(new Event("change"));
-    await card.updateComplete;
+    await flush();
     expect(hass.published().at(-1)).toEqual([
       "clock1/cmd/settings",
       '{"brightness":200,"autoBrightness":false}',
     ]);
     // No blur ever comes, but the draft is gone, so new state shows again.
-    expect(card._drafts).toEqual({});
     hass.mqtt("clock1/state/settings", { brightness: 50, autoBrightness: false });
-    await card.updateComplete;
+    await flush();
     expect(bri.value).toBe("50");
   });
 
@@ -178,8 +186,8 @@ describe("awtrix-ng-card", () => {
     const hass = fakeHass();
     const card = await mount(hass);
     online(hass);
-    card._tab = "indicators";
-    await card.updateComplete;
+    tab(card, "Indicators").click();
+    await flush();
     const top = card.shadowRoot!.querySelector<HTMLElement>(".ind")!;
     expect(top.querySelector(".ind-dot")!.classList.contains("blink")).toBe(true);
     expect(top.querySelector<HTMLSelectElement>(".ind-mode")!.value).toBe("blink");
@@ -191,8 +199,8 @@ describe("awtrix-ng-card", () => {
     const hass = fakeHass();
     const card = await mount(hass);
     online(hass);
-    card._tab = "display";
-    await card.updateComplete;
+    tab(card, "Display").click();
+    await flush();
     expect(clean($(card, ".info").textContent)).toBe("Firmware 1.2.3 · IP 10.0.0.5 · Up 3h 2m");
     const options = [...card.shadowRoot!.querySelectorAll("section:not([hidden]) select option")].map(
       (o) => o.textContent,
@@ -205,7 +213,7 @@ describe("awtrix-ng-card", () => {
     const hass = fakeHass();
     const card = await mount(hass);
     online(hass);
-    await card.updateComplete;
+    await flush();
     const tabs = [...card.shadowRoot!.querySelectorAll<HTMLElement>(".tabs button")];
     expect(tabs.filter((t) => !t.hidden).map((t) => clean(t.textContent))).toEqual([
       "Message",
@@ -218,7 +226,7 @@ describe("awtrix-ng-card", () => {
     const hass = fakeHass();
     const card = await mount(hass);
     hass.mqtt("clock1/event/error", { request: "clock1/cmd/notify", error: { message: "bad icon" } });
-    await card.updateComplete;
+    await flush();
     expect(clean($(card, ".toast").textContent)).toBe("Clock rejected notify: bad icon");
   });
 });
