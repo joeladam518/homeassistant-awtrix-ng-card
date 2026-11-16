@@ -12,7 +12,9 @@ const VOLUMES = [
 function say(card: AwtrixNgCard): void {
   const input = card._q("#sayText");
   const text = input.value.trim();
-  if (!text) return;
+  if (!text) {
+    return;
+  }
   card._pub("audio/play", { speech: text });
   input.value = "";
 }
@@ -68,7 +70,9 @@ export function renderSoundPanel(card: AwtrixNgCard): TemplateResult {
             aria-label="Play station"
             @click=${() => {
               const v = card._q<HTMLSelectElement>("#station").value;
-              if (v !== "") card._pub("audio/play", { station: /^\d+$/.test(v) ? Number(v) : v });
+              if (v !== "") {
+                card._pub("audio/play", { station: /^\d+$/.test(v) ? Number(v) : v });
+              }
             }}
           >
             <ha-icon icon="mdi:play"></ha-icon>

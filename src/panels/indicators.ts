@@ -18,7 +18,9 @@ function sendIndicator(card: AwtrixNgCard, i: number, on: boolean, row: HTMLElem
   const blinkMs = on && mode === "blink" ? 500 : 0;
   const fadeMs = on && mode === "fade" ? 1500 : 0;
   const ind = card._dev?.indicators?.[i - 1];
-  if (ind) Object.assign(ind, { on, color, blinkMs, fadeMs }); // show it straight away
+  if (ind) {
+    Object.assign(ind, { on, color, blinkMs, fadeMs });
+  } // show it straight away
   card._pub(`indicators/${i}`, on ? { color, blinkMs, fadeMs } : { color: 0 });
   card.requestUpdate();
 }

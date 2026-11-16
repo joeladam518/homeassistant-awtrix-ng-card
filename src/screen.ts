@@ -24,7 +24,9 @@ export function drawScreen(
     canvas.height = h * CELL;
   }
   const ctx = canvas.getContext("2d");
-  if (!ctx) return;
+  if (!ctx) {
+    return;
+  }
   ctx.fillStyle = "#050505";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   const px = frame?.pixels;

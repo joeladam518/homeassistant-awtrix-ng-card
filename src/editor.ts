@@ -34,7 +34,9 @@ export class AwtrixNgCardEditor extends LitElement {
   }
 
   override render(): unknown {
-    if (!this.hass || !this._config) return nothing;
+    if (!this.hass || !this._config) {
+      return nothing;
+    }
     const prefixes = Object.values(this.hass.states)
       .filter(
         (e) => /mqtt_prefix/.test(e.entity_id) && e.state && !["unknown", "unavailable"].includes(e.state),

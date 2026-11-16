@@ -151,7 +151,9 @@ export class AwtrixNgCard extends LitElement {
   private _previewTimer?: ReturnType<typeof setTimeout>;
   private _io?: IntersectionObserver;
   private readonly _onVisibility = () => {
-    if (document.visibilityState === "visible") this._schedulePreview(50);
+    if (document.visibilityState === "visible") {
+      this._schedulePreview(50);
+    }
   };
 
   constructor() {
@@ -174,7 +176,9 @@ export class AwtrixNgCard extends LitElement {
   }
 
   setConfig(config: AwtrixNgCardConfig): void {
-    if (!config?.prefix) throw new Error("Set 'prefix' to the clock's MQTT prefix, e.g. awtrix_clock_1");
+    if (!config?.prefix) {
+      throw new Error("Set 'prefix' to the clock's MQTT prefix, e.g. awtrix_clock_1");
+    }
     const prev = this._config?.prefix;
     const prefix = String(config.prefix).replace(/\/+$/, "");
     this._config = { preview: true, preview_interval: 2000, ...config, prefix };
@@ -191,7 +195,9 @@ export class AwtrixNgCard extends LitElement {
       this._rainbow = !!this._last.rainbow;
       this._recent = loadRecent(storageKey(prefix, "recent"));
     }
-    if (this.isConnected && this._hass) void this._subscribe();
+    if (this.isConnected && this._hass) {
+      void this._subscribe();
+    }
   }
 
   get hass(): HomeAssistant | undefined {
@@ -203,17 +209,23 @@ export class AwtrixNgCard extends LitElement {
     this._hass = hass;
     if (first) {
       this.requestUpdate();
-      if (this.isConnected) void this._subscribe();
+      if (this.isConnected) {
+        void this._subscribe();
+      }
     }
   }
 
   override connectedCallback(): void {
     super.connectedCallback();
-    if (this._hass && this._config) void this._subscribe();
+    if (this._hass && this._config) {
+      void this._subscribe();
+    }
     if ("IntersectionObserver" in window) {
       this._io = new IntersectionObserver((entries) => {
         this._visible = entries.some((e) => e.isIntersecting);
-        if (this._visible) this._schedulePreview(50);
+        if (this._visible) {
+          this._schedulePreview(50);
+        }
       });
       this._io.observe(this);
     }
@@ -243,7 +255,9 @@ export class AwtrixNgCard extends LitElement {
 
   private async _subscribe(): Promise<void> {
     const h = this._hass;
-    if (this._subscribing || this._unsubs.length || !h?.connection || !this._config) return;
+    if (this._subscribing || this._unsubs.length || !h?.connection || !this._config) {
+      return;
+    }
     this._subscribing = true;
     const onMessage = (m: MqttMessage) => this._onMessage(m.topic, m.payload);
     const topics = [`${this._p}/state/#`, `${this._p}/availability`, `${this._p}/event/error`];
@@ -289,7 +303,9 @@ export class AwtrixNgCard extends LitElement {
         break;
       case "state/device": {
         const d = json<DeviceState>();
-        if (!d) return;
+        if (!d) {
+          return;
+        }
         this._dev = d;
         if (d.currentApp) {
           this._app = d.currentApp;
@@ -299,26 +315,36 @@ export class AwtrixNgCard extends LitElement {
       }
       case "state/settings": {
         const s = json<ClockSettings>();
-        if (s) this._set = s;
+        if (s) {
+          this._set = s;
+        }
         break;
       }
       case "state/capabilities": {
         const c = json<Capabilities>();
-        if (c) this._caps = c;
+        if (c) {
+          this._caps = c;
+        }
         break;
       }
       case "state/audio": {
         const a = json<AudioState>();
-        if (a) this._audio = a;
+        if (a) {
+          this._audio = a;
+        }
         break;
       }
       case "state/apps/active":
         this._app = payload;
-        if (payload) this._seenApps.add(payload);
+        if (payload) {
+          this._seenApps.add(payload);
+        }
         break;
       case "state/screen": {
         const s = json<ScreenFrame>();
-        if (!s) return;
+        if (!s) {
+          return;
+        }
         this._screen = s;
         this._draw();
         this._schedulePreview();
@@ -339,7 +365,9 @@ export class AwtrixNgCard extends LitElement {
   }
 
   _pub(sub: string, payload?: unknown): void {
-    if (!this._hass) return;
+    if (!this._hass) {
+      return;
+    }
     void publish(this._hass, this._p, sub, payload).catch((e: unknown) =>
       this._toast.show((e as Error)?.message || "Publish failed"),
     );
@@ -356,7 +384,9 @@ export class AwtrixNgCard extends LitElement {
 
   _schedulePreview(delay?: number): void {
     clearTimeout(this._previewTimer);
-    if (!this._config?.preview || !this._unsubs.length) return;
+    if (!this._config?.preview || !this._unsubs.length) {
+      return;
+    }
     const wait = delay ?? Math.max(500, Number(this._config.preview_interval) || 2000);
     this._previewTimer = setTimeout(() => this._requestFrame(), wait);
   }
@@ -364,7 +394,9 @@ export class AwtrixNgCard extends LitElement {
   private _requestFrame(): void {
     const canRun =
       this.isConnected && this._visible && document.visibilityState === "visible" && this._online !== false;
-    if (!canRun) return; // resumes from the IntersectionObserver / visibilitychange
+    if (!canRun) {
+      return;
+    } // resumes from the IntersectionObserver / visibilitychange
     if (this._dev?.matrixPower === false) {
       this._draw();
       this._schedulePreview();
@@ -381,8 +413,9 @@ export class AwtrixNgCard extends LitElement {
 
   private _draw(): void {
     const canvas = this.renderRoot?.querySelector<HTMLCanvasElement>("#screen");
-    if (canvas)
+    if (canvas) {
       drawScreen(canvas, this._screen, { off: this._dev?.matrixPower === false, big: this._isBig() });
+    }
   }
 
   protected override updated(changed: PropertyValues): void {
@@ -394,13 +427,17 @@ export class AwtrixNgCard extends LitElement {
 
   private async _loadApps(): Promise<void> {
     const ip = this._dev?.ipAddress;
-    if (!ip || location.protocol === "https:") return;
+    if (!ip || location.protocol === "https:") {
+      return;
+    }
     try {
       const ctl = new AbortController();
       const timer = setTimeout(() => ctl.abort(), 3000);
       const r = await fetch(`http://${ip}/api/v1/apps`, { signal: ctl.signal });
       clearTimeout(timer);
-      if (!r.ok) return;
+      if (!r.ok) {
+        return;
+      }
       const list = (await r.json()) as { name?: string; enabled?: boolean; present?: boolean }[];
       if (Array.isArray(list)) {
         this._apps = list
@@ -475,7 +512,9 @@ export class AwtrixNgCard extends LitElement {
    */
   _held(key: string, value: unknown): unknown {
     const focused = this.renderRoot?.querySelector?.(":focus") as HTMLElement | null;
-    if (value == null || key in this._drafts || focused?.dataset?.k === key) return noChange;
+    if (value == null || key in this._drafts || focused?.dataset?.k === key) {
+      return noChange;
+    }
     return live(String(value));
   }
 
@@ -526,10 +565,15 @@ export class AwtrixNgCard extends LitElement {
         "Temperature",
       ]);
     }
-    if (d.humidity != null) chips.push(["mdi:water-percent", `${Math.round(d.humidity)}%`, "Humidity"]);
-    if (d.lightLevel != null)
+    if (d.humidity != null) {
+      chips.push(["mdi:water-percent", `${Math.round(d.humidity)}%`, "Humidity"]);
+    }
+    if (d.lightLevel != null) {
       chips.push(["mdi:white-balance-sunny", `${Math.round(d.lightLevel)}%`, "Ambient light"]);
-    if (d.wifiRssi != null) chips.push([wifiIcon(d.wifiRssi), `${d.wifiRssi} dBm`, "Wi-Fi signal"]);
+    }
+    if (d.wifiRssi != null) {
+      chips.push([wifiIcon(d.wifiRssi), `${d.wifiRssi} dBm`, "Wi-Fi signal"]);
+    }
     return chips.map(
       ([icon, text, title]) =>
         html`<span class="chip" title=${title}><ha-icon .icon=${icon}></ha-icon>${text}</span>`,
@@ -537,7 +581,9 @@ export class AwtrixNgCard extends LitElement {
   }
 
   private _renderApps(): unknown {
-    if (!this._appsOpen) return nothing;
+    if (!this._appsOpen) {
+      return nothing;
+    }
     const list = this._appList();
     return html`<div class="apps">
       ${
@@ -558,7 +604,9 @@ export class AwtrixNgCard extends LitElement {
 
   override render(): unknown {
     const c = this._config;
-    if (!c || !this._hass) return nothing;
+    if (!c || !this._hass) {
+      return nothing;
+    }
     const d = this._dev || {};
     const s = this._set || {};
     const caps = this._caps || {};
@@ -634,7 +682,9 @@ export class AwtrixNgCard extends LitElement {
             aria-label="Choose app"
             @click=${() => {
               this._appsOpen = !this._appsOpen;
-              if (this._appsOpen) void this._loadApps();
+              if (this._appsOpen) {
+                void this._loadApps();
+              }
             }}
           >
             <span>${this._app || d.currentApp || "–"}</span><ha-icon icon="mdi:menu-down"></ha-icon>
@@ -709,7 +759,9 @@ export class AwtrixNgCard extends LitElement {
 
   private _togglePower(): void {
     const on = this._dev?.matrixPower === false;
-    if (this._dev) this._dev.matrixPower = on;
+    if (this._dev) {
+      this._dev.matrixPower = on;
+    }
     this._pub("display", { power: on });
     this.requestUpdate();
   }
