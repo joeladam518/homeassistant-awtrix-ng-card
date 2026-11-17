@@ -19,6 +19,15 @@ Everything goes through **MQTT**, the same way Blueforcer's own Home Assistant g
 
 ### Home Assistant Marketplace
 
+[![Open this repository in the Marketplace on your Home Assistant.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=joeladam518&repository=homeassistant-awtrix-ng-card&category=plugin)
+
+1. Open **Marketplace** and search for **AWTRIX NG Card**.
+2. Install it, then reload the browser.
+
+#### Custom repository
+
+If the card doesn't show up in the search, add it as a custom repository:
+
 1. Open **Marketplace** and choose **⋮ → Custom repositories**.
 2. Add `https://github.com/joeladam518/homeassistant-awtrix-ng-card` with the type **Dashboard**.
 3. Find **AWTRIX NG Card** and install it, then reload the browser.
@@ -27,7 +36,7 @@ Everything goes through **MQTT**, the same way Blueforcer's own Home Assistant g
 
 1. Download `awtrix-ng-card.js` from the [latest release](https://github.com/joeladam518/homeassistant-awtrix-ng-card/releases/latest) into `/config/www/`.
 2. Go to **Settings → Dashboards → ⋮ → Resources → Add resource**:
-   - URL: `/local/awtrix-ng-card.js?v=2.1.0`
+   - URL: `/local/awtrix-ng-card.js?v=2.1.1`
    - Type: **JavaScript module**
 3. Hard-refresh the browser. In the phone app, use **Settings → Companion app → Debugging → Reset frontend cache**.
 
