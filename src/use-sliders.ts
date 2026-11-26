@@ -1,4 +1,4 @@
-import { heldValue } from "homeassistant-ui-shared";
+import { heldValue } from "@joeladam518/homeassistant-ui-shared";
 import { useState } from "preact/hooks";
 
 /** Draft values for sliders while the user drags them, and the handlers that go with them. */

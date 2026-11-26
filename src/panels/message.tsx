@@ -7,7 +7,7 @@ import {
   lsSet,
   type RecentMessage,
   saveRecent,
-} from "homeassistant-ui-shared";
+} from "@joeladam518/homeassistant-ui-shared";
 import type { FunctionComponent as FC } from "preact";
 import { useRef, useState } from "preact/hooks";
 

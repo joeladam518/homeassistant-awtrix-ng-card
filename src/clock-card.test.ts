@@ -1,4 +1,11 @@
-import { act, type FakeHass, fakeHass, flush, stubHaElements, tick } from "homeassistant-ui-shared/testing";
+import {
+  act,
+  type FakeHass,
+  fakeHass,
+  flush,
+  stubHaElements,
+  tick,
+} from "@joeladam518/homeassistant-ui-shared/testing";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 import type { AwtrixNgCardElement as AwtrixNgCard } from "./clock-card.tsx";

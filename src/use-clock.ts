@@ -4,7 +4,7 @@ import {
   publish,
   subscribeTopic,
   type Unsubscribe,
-} from "homeassistant-ui-shared";
+} from "@joeladam518/homeassistant-ui-shared";
 import { type RefObject } from "preact";
 import { useEffect, useReducer, useRef } from "preact/hooks";
 
