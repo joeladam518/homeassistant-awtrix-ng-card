@@ -1,15 +1,16 @@
-import { lsGet, lsSet } from "@joeladam518/shared-cards/storage.ts";
-import type { FunctionComponent as FC } from "preact";
-import { useRef, useState } from "preact/hooks";
-
 import {
   buildNotify,
   DEFAULT_DURATION_MS,
   DURATIONS,
   loadRecent,
+  lsGet,
+  lsSet,
   type RecentMessage,
   saveRecent,
-} from "../notify.ts";
+} from "homeassistant-ui-shared";
+import type { FunctionComponent as FC } from "preact";
+import { useRef, useState } from "preact/hooks";
+
 import type { ClockApi } from "../use-clock.ts";
 
 export type LastMessage = RecentMessage & { sound?: boolean };

@@ -1,8 +1,7 @@
-import { act, flush, stubHaElements } from "@joeladam518/shared-cards/testing.ts";
+import { act, type FakeHass, fakeHass, flush, stubHaElements, tick } from "homeassistant-ui-shared/testing";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 import type { AwtrixNgCardElement as AwtrixNgCard } from "./clock-card.tsx";
-import { type FakeHass, fakeHass, flush as tick } from "./test-helpers.ts";
 
 beforeAll(async () => {
   stubHaElements();

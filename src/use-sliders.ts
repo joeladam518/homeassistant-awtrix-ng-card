@@ -1,4 +1,4 @@
-import { heldValue } from "@joeladam518/shared-cards/hooks.ts";
+import { heldValue } from "homeassistant-ui-shared";
 import { useState } from "preact/hooks";
 
 /** Draft values for sliders while the user drags them, and the handlers that go with them. */

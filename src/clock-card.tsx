@@ -1,7 +1,14 @@
-import { type CardProps, createCardElement } from "@joeladam518/shared-cards/card-element.tsx";
-import { batteryIcon } from "@joeladam518/shared-cards/format.ts";
-import { useToast } from "@joeladam518/shared-cards/toast.tsx";
-import type { HomeAssistant, LovelaceCardConfig } from "@joeladam518/shared-cards/types.ts";
+import {
+  awtrixCss,
+  batteryIcon,
+  type CardProps,
+  createCardElement,
+  type HomeAssistant,
+  type LovelaceCardConfig,
+  switchCss,
+  toastCss,
+  useToast,
+} from "homeassistant-ui-shared";
 import type { FunctionComponent as FC } from "preact";
 import { useRef, useState } from "preact/hooks";
 
@@ -12,10 +19,6 @@ import { MessagePanel } from "./panels/message.tsx";
 import { SoundPanel } from "./panels/sound.tsx";
 import { type DeviceState, useClock } from "./use-clock.ts";
 import { useSliders } from "./use-sliders.ts";
-
-import commonCss from "./common.css?inline";
-import switchCss from "@joeladam518/shared-cards/switch.css?inline";
-import toastCss from "@joeladam518/shared-cards/toast.css?inline";
 
 export interface AwtrixNgCardConfig extends LovelaceCardConfig {
   /** The clock's MQTT prefix (required), e.g. awtrix_clock_1. */
@@ -296,7 +299,7 @@ export const AwtrixNgCard: FC<CardProps<Config>> = ({ config: c, hass, host }) =
 };
 
 export const AwtrixNgCardElement = createCardElement(AwtrixNgCard, {
-  styles: [switchCss, toastCss, commonCss],
+  styles: [switchCss, toastCss, awtrixCss],
   config: (config: AwtrixNgCardConfig): Config => {
     if (!config?.prefix) {
       throw new Error("Set 'prefix' to the clock's MQTT prefix, e.g. awtrix_clock_1");
